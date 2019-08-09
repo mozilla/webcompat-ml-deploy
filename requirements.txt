@@ -1,0 +1,1 @@
+git+git://github.com/mozilla/webcompat_ml@master#egg=webcompat_ml
