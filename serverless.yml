@@ -1,0 +1,16 @@
+service: webcompat-ml-serverless
+
+provider:
+  name: aws
+  runtime: python3.7
+
+functions:
+  webhook:
+    handler: handler.webhook
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
