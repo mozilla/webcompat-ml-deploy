@@ -1,3 +1,8 @@
+try:
+    import unzip_requirements
+except ImportError:
+    pass
+
 import json
 import logging
 
@@ -14,3 +19,7 @@ def webhook(event, context):
     except json.JSONDecodeError:
         logger.error("Failed to decode JSON")
         return {"body": json.dumps({"error": "JSON decode failure"}), "statusCode": 500}
+
+
+def invalid(event, context):
+    pass
