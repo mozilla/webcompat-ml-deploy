@@ -32,4 +32,6 @@ override.tf.json
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
 
+lambda_handler.zip
+
 # End of https://www.gitignore.io/api/terraform
