@@ -34,3 +34,19 @@ resource "aws_batch_job_queue" "webcompat-classify" {
     "${aws_batch_compute_environment.webcompat-ml.arn}"
   ]
 }
+
+resource "aws_batch_job_definition" "webcompat_classification" {
+  name = "webcompat_classification"
+  type = "container"
+
+  container_properties = <<CONTAINER_PROPERTIES
+{
+    "image": "mozillawebcompatml/classify",
+    "memory": 2048,
+    "vcpus": 1,
+    "command": [
+        "python", "run_job.py", "-i", "Ref::file_url"
+    ]
+}
+CONTAINER_PROPERTIES
+}
