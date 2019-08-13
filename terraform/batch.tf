@@ -45,7 +45,7 @@ resource "aws_batch_job_definition" "webcompat_classification" {
     "memory": 2048,
     "vcpus": 1,
     "command": [
-        "python", "run_job.py", "-i", "Ref::file_url"
+        "python", "run.py", "--issue", "Ref::issue", "--file_url", "Ref::file_url"
     ]
 }
 CONTAINER_PROPERTIES
