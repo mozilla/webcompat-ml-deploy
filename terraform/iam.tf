@@ -75,7 +75,7 @@ EOF
 }
 
 resource "aws_iam_policy" "lambda-policy" {
-  name = "aws-batch-image-processor-function-policy"
+  name = "aws-webcompat-ml-classify-function-policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
