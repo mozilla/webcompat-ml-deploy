@@ -1,11 +1,8 @@
-from io import StringIO
-
 import json
 import logging
 import os
 
 import boto3
-import botocore.vendored.requests as requests
 
 
 logger = logging.getLogger(__name__)
@@ -26,12 +23,7 @@ def webhook(event, context):
         logger.error("Failed to decode JSON")
         return {"body": json.dumps({"error": "JSON decode failure"}), "statusCode": 500}
 
-    io = StringIO()
-    json.dump(hookdata, io)
-
-    # Upload tmp csv file
-    response = requests.post("https://transfer.sh", data=io)
-    parameters = {"file_url": response.content}
+    parameters = {"issue_url": hookdata["issue"]["url"]}
 
     batch = boto3.client(service_name="batch")
     batch.submit_job(
