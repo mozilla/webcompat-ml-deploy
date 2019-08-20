@@ -38,5 +38,10 @@ if __name__ == "__main__":
     s3 = boto3.client("s3")
 
     with open("predictions.json", "rb") as prediction:
-        output_name = "{}.json".format(args.issue_url.split('/')[-1])
-        s3.upload_fileobj(prediction, S3_RESULTS_INVALID_BUCKET, output_name)
+        output_name = "{}.json".format(args.issue_url.split("/")[-1])
+        s3.upload_fileobj(
+            prediction,
+            S3_RESULTS_INVALID_BUCKET,
+            output_name,
+            ExtraArgs={"ContentType": "application/json"},
+        )
