@@ -7,7 +7,7 @@ import urllib.request
 
 import boto3
 
-from webcompat_ml.utils import prepare_gh_event_invalid
+from webcompat_ml.utils.preprocess import prepare_gh_event_invalid
 
 
 S3_RESULTS_INVALID_BUCKET = os.environ.get("S3_RESULTS_INVALID_BUCKET")
@@ -22,7 +22,7 @@ if __name__ == "__main__":
         with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
             data = json.load(response)
             df = prepare_gh_event_invalid(data)
-            df.to_csv(tmp_file)
+            df.to_csv(tmp_file.name, index=False)
 
             command = [
                 "webcompat-ml-invalid",
@@ -35,10 +35,8 @@ if __name__ == "__main__":
             ]
             subprocess.run(command, check=True)
 
-    s3 = boto3.resource("s3")
-    data = open("predictions.json", "r")
-    output_name = "{}.json".format(args.issue)
+    s3 = boto3.client("s3")
 
-    s3.Bucket(S3_RESULTS_INVALID_BUCKET).put_object(
-        Key=output_name, Body=data, ContentType="application/json"
-    )
+    with open("predictions.json", "rb") as prediction:
+        output_name = "{}.json".format(args.issue_url.split('/')[-1])
+        s3.upload_fileobj(prediction, S3_RESULTS_INVALID_BUCKET, output_name)
