@@ -21,7 +21,7 @@ def validate_signature(event):
 
     payload = event["body"]
     signature = event["headers"]["X-Hub-Signature"]
-    computed_hash = hmac.new(secret.encode(), payload.encode(), hashlib.sha1)
+    computed_hash = hmac.new(SECRET.encode(), payload.encode(), hashlib.sha1)
     expected = computed_hash.hexdigest().encode()
     received = signature.encode()
     return hmac.compare_digest(expected, received)
@@ -30,10 +30,10 @@ def validate_signature(event):
 def webhook(event, context):
     """Handler for GitHub webhook"""
 
+    logger.debug("Event: {}".format(event))
+
     if not validate_signature(event):
         return {"statusCode": 403, "body": "Signature doesn't match."}
-
-    logger.debug("Event: {}".format(event))
 
     try:
         # Parse data from GH event
