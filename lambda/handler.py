@@ -1,4 +1,6 @@
 import json
+import hashlib
+import hmac
 import logging
 import os
 
@@ -11,10 +13,25 @@ logger.setLevel(logging.DEBUG)
 JOB_NAME = "webcompat_ml_classify"
 JOB_DEFINITION = os.environ.get("JOB_DEFINITION")
 JOB_QUEUE = os.environ.get("JOB_QUEUE")
+SECRET = os.environ.get("WEBHOOK_SECRET")
+
+
+def validate_signature(event):
+    """Validate GH event signature"""
+
+    payload = event["body"]
+    signature = event["headers"]["X-Hub-Signature"]
+    computed_hash = hmac.new(secret.encode(), payload.encode(), hashlib.sha1)
+    expected = computed_hash.hexdigest().encode()
+    received = signature.encode()
+    return hmac.compare_digest(expected, received)
 
 
 def webhook(event, context):
     """Handler for GitHub webhook"""
+
+    if not validate_signature(event):
+        return {"statusCode": 403, "body": "Signature doesn't match."}
 
     logger.debug("Event: {}".format(event))
 
@@ -35,7 +52,4 @@ def webhook(event, context):
         parameters=parameters,
     )
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(job)
-    }
+    return {"statusCode": 200, "body": json.dumps(job)}
