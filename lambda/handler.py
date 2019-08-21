@@ -23,7 +23,7 @@ def validate_signature(event):
     signature = event["headers"]["X-Hub-Signature"]
     computed_hash = hmac.new(SECRET.encode(), payload.encode(), hashlib.sha1)
     expected = computed_hash.hexdigest().encode()
-    received = signature.lsplit('sha1=').encode()
+    received = signature.lstrip('sha1=').encode()
     return hmac.compare_digest(expected, received)
 
 
