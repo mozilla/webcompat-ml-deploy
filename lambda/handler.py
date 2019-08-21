@@ -4,8 +4,8 @@ import os
 
 import boto3
 
-
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 JOB_NAME = "webcompat_ml_classify"
@@ -15,6 +15,8 @@ JOB_QUEUE = os.environ.get("JOB_QUEUE")
 
 def webhook(event, context):
     """Handler for GitHub webhook"""
+
+    logger.debug("Event: {}".format(event))
 
     try:
         # Parse data from GH event
@@ -26,9 +28,11 @@ def webhook(event, context):
     parameters = {"issue_url": hookdata["issue"]["url"]}
 
     batch = boto3.client(service_name="batch")
-    batch.submit_job(
+    job = batch.submit_job(
         jobName=JOB_NAME,
         jobQueue=JOB_QUEUE,
         jobDefinition=JOB_DEFINITION,
         parameters=parameters,
     )
+
+    return job
