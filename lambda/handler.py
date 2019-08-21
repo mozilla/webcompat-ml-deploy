@@ -35,4 +35,7 @@ def webhook(event, context):
         parameters=parameters,
     )
 
-    return job
+    return {
+        "statusCode": 200,
+        "body": json.dumps(job)
+    }
