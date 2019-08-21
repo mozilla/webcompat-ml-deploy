@@ -47,11 +47,36 @@ resource "aws_iam_role" "aws_batch_service_role" {
 EOF
 }
 
+resource "aws_iam_policy" "aws_batch_access_webcompat_s3" {
+  name               = "webcompat_batch_s3_access"
+  policy  = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:*"],
+      "Resource": ["${aws_s3_bucket.webcompat_ml_results.arn}"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["s3:*"],
+      "Resource": ["${aws_s3_bucket.webcompat_ml_results.arn}/*"]
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_iam_role_policy_attachment" "aws_batch_service_role" {
   role       = "${aws_iam_role.aws_batch_service_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
 }
 
+resource "aws_iam_role_policy_attachment" "aws_batch_webcompat_s3" {
+  role       = "${aws_iam_role.aws_batch_service_role.name}"
+  policy_arn = "${aws_iam_policy.aws_batch_access_webcompat_s3.arn}"
+}
 
 # IAM setup for Lambda
 resource "aws_iam_role" "webcompat_ml_lambda" {
