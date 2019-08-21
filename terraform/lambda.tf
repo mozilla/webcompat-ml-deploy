@@ -14,7 +14,7 @@ resource "aws_lambda_function" "webcompat_ml_webhook" {
   role = "${aws_iam_role.webcompat_ml_lambda.arn}"
   environment {
     variables = {
-      JOB_DEFINITION = "${aws_batch_job_definition.webcompat_classification.name}"
+      JOB_DEFINITION = "${aws_batch_job_definition.webcompat_classification.name}:${aws_batch_job_definition.webcompat_classification.revision}"
       JOB_QUEUE = "${aws_batch_job_queue.webcompat-classify.name}"
     }
   }
