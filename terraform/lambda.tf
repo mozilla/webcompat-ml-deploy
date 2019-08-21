@@ -55,6 +55,7 @@ resource "aws_api_gateway_deployment" "webcompat_ml_webhook" {
     ]
 
     rest_api_id = "${aws_api_gateway_rest_api.webcompat_ml_webhook.id}"
+    stage_name  = "webhook"
 }
 
 # AWS Lambda permissions
