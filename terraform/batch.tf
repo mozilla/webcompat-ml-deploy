@@ -41,7 +41,7 @@ resource "aws_batch_job_definition" "webcompat_classification" {
 
   container_properties = <<CONTAINER_PROPERTIES
 {
-    "image": "mozillawebcompatml/classify",
+    "image": "mozillawebcompat/ml-task",
     "memory": 2048,
     "vcpus": 1,
     "command": [
