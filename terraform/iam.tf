@@ -75,7 +75,7 @@ EOF
 }
 
 resource "aws_iam_policy" "lambda-policy" {
-  name = "aws-webcompat-ml-classify-function-policy"
+  name   = "aws-webcompat-ml-classify-function-policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -96,12 +96,12 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "lambda-service" {
-  role = "${aws_iam_role.webcompat_ml_lambda.name}"
+  role       = "${aws_iam_role.webcompat_ml_lambda.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 
 resource "aws_iam_role_policy_attachment" "lambda-policy" {
-  role = "${aws_iam_role.webcompat_ml_lambda.name}"
+  role       = "${aws_iam_role.webcompat_ml_lambda.name}"
   policy_arn = "${aws_iam_policy.lambda-policy.arn}"
 }

@@ -27,8 +27,8 @@ resource "aws_batch_compute_environment" "webcompat-ml" {
 }
 
 resource "aws_batch_job_queue" "webcompat-classify" {
-  name = "webcompat-classification-queue"
-  state = "ENABLED"
+  name     = "webcompat-classification-queue"
+  state    = "ENABLED"
   priority = 1
   compute_environments = [
     "${aws_batch_compute_environment.webcompat-ml.arn}"
