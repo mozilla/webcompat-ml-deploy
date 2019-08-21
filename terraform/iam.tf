@@ -55,7 +55,7 @@ resource "aws_iam_role_policy_attachment" "aws_batch_service_role" {
 
 # IAM setup for Lambda
 resource "aws_iam_role" "webcompat_ml_lambda" {
-  name = "webcompat-ml-invalid-lambda"
+  name = "webcompat-ml-lambda"
 
   assume_role_policy = <<EOF
 {
@@ -85,7 +85,10 @@ resource "aws_iam_policy" "lambda-policy" {
         "batch:SubmitJob"
       ],
       "Effect": "Allow",
-      "Resource": "${aws_batch_compute_environment.webcompat-ml.arn}"
+      "Resource": [
+        "${aws_batch_job_definition.webcompat_classification.arn}",
+        "${aws_batch_job_queue.webcompat-classify.arn}"
+      ]
     }
   ]
 }
