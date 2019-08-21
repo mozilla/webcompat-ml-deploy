@@ -6,7 +6,8 @@ data "archive_file" "webcompat_ml" {
 }
 
 resource "random_password" "webhook_secret" {
-  length = 16
+  length  = 16
+  special = false
 }
 
 resource "aws_lambda_function" "webcompat_ml_webhook" {
@@ -27,7 +28,7 @@ resource "aws_lambda_function" "webcompat_ml_webhook" {
 
   lifecycle {
     ignore_changes = [
-      environment["variables"]["WEBHOOK_SECRET"],
+      environment.0.variables.WEBHOOK_SECRET,
     ]
   }
 }
