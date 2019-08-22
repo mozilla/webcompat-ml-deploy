@@ -55,12 +55,12 @@ resource "aws_iam_policy" "aws_batch_access_webcompat_s3" {
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": ["s3:*"],
+      "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
       "Resource": ["${aws_s3_bucket.webcompat_ml_results.arn}"]
     },
     {
       "Effect": "Allow",
-      "Action": ["s3:*"],
+      "Action": ["s3:PutObject"],
       "Resource": ["${aws_s3_bucket.webcompat_ml_results.arn}/*"]
     }
   ]
@@ -74,7 +74,7 @@ resource "aws_iam_role_policy_attachment" "aws_batch_service_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "aws_batch_webcompat_s3" {
-  role       = "${aws_iam_role.aws_batch_service_role.name}"
+  role       = "${aws_iam_role.ecs_instance_role.name}"
   policy_arn = "${aws_iam_policy.aws_batch_access_webcompat_s3.arn}"
 }
 
