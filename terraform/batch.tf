@@ -9,8 +9,9 @@ resource "aws_batch_compute_environment" "webcompat-ml" {
       "m3.medium",
     ]
 
-    max_vcpus = 16
-    min_vcpus = 0
+    max_vcpus     = 16
+    desired_vcpus = 0
+    min_vcpus     = 0
 
     security_group_ids = [
       "${aws_security_group.webcompat-ml-sg.id}",
@@ -46,6 +47,9 @@ resource "aws_batch_job_definition" "webcompat_classification" {
     "vcpus": 1,
     "command": [
         "python", "run.py", "--issue-url", "Ref::issue_url"
+    ],
+    "environment": [
+        {"name": "S3_RESULTS_INVALID_BUCKET", "value": "${aws_s3_bucket.webcompat_ml_results.arn}"}
     ]
 }
 CONTAINER_PROPERTIES

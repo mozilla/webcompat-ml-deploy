@@ -48,8 +48,8 @@ EOF
 }
 
 resource "aws_iam_policy" "aws_batch_access_webcompat_s3" {
-  name               = "webcompat_batch_s3_access"
-  policy  = <<EOF
+  name   = "webcompat_batch_s3_access"
+  policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
