@@ -2,6 +2,12 @@ resource "aws_s3_bucket" "webcompat_ml_results" {
   bucket = "webcompat-ml-results"
   acl    = "public-read"
 
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET"]
+    allowed_origins = ["*"]
+  }
+
   website {
     index_document = "index.html"
     error_document = "error.html"
