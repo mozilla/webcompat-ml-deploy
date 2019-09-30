@@ -10,8 +10,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-JOB_NAME = "webcompat_ml_classify"
-JOB_DEFINITION = os.environ.get("JOB_DEFINITION")
+JOB_DEFINITIONS = os.environ.get("JOB_DEFINITIONS").split(",")
 JOB_QUEUE = os.environ.get("JOB_QUEUE")
 SECRET = os.environ.get("WEBHOOK_SECRET")
 
@@ -45,11 +44,12 @@ def webhook(event, context):
     parameters = {"issue_url": hookdata["issue"]["url"]}
 
     batch = boto3.client(service_name="batch")
-    job = batch.submit_job(
-        jobName=JOB_NAME,
-        jobQueue=JOB_QUEUE,
-        jobDefinition=JOB_DEFINITION,
-        parameters=parameters,
-    )
+    for jobDefinition in JOB_DEFINITIONS:
+        job = batch.submit_job(
+            jobQueue=JOB_QUEUE,
+            jobName=jobDefinition,
+            jobDefinition=jobDefinition,
+            parameters=parameters,
+        )
 
     return {"statusCode": 200, "body": json.dumps(job)}

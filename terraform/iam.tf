@@ -111,7 +111,8 @@ resource "aws_iam_policy" "lambda-policy" {
       ],
       "Effect": "Allow",
       "Resource": [
-        "${aws_batch_job_definition.webcompat_classification.arn}",
+        "${aws_batch_job_definition.webcompat_classification_invalid.arn}",
+        "${aws_batch_job_definition.webcompat_classification_needsdiagnosis.arn}",
         "${aws_batch_job_queue.webcompat-classify.arn}"
       ]
     }
