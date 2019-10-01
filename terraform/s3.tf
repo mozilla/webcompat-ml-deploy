@@ -24,7 +24,8 @@ resource "aws_s3_bucket" "webcompat_ml_results" {
       "Action": "s3:GetObject",
       "Resource": "arn:aws:s3:::webcompat-ml-results/*"
     }
-  ]
+  ],
+  "Version": "2008-10-17"
 }
 EOF
 }
