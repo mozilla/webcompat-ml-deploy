@@ -3,6 +3,7 @@ import hashlib
 import hmac
 import logging
 import os
+import uuid
 
 import boto3
 
@@ -47,7 +48,7 @@ def webhook(event, context):
     for jobDefinition in JOB_DEFINITIONS:
         job = batch.submit_job(
             jobQueue=JOB_QUEUE,
-            jobName=jobDefinition,
+            jobName=uuid.uuid4().hex,
             jobDefinition=jobDefinition,
             parameters=parameters,
         )
