@@ -67,7 +67,8 @@ resource "aws_batch_job_definition" "webcompat_classification_needsdiagnosis" {
         "python", "run.py", "--issue-url", "Ref::issue_url"
     ],
     "environment": [
-        {"name": "S3_RESULTS_ML_BUCKET", "value": "${aws_s3_bucket.webcompat_ml_results.id}"}
+        {"name": "S3_RESULTS_ML_BUCKET", "value": "${aws_s3_bucket.webcompat_ml_results.id}"},
+        {"name": "ES_URL", "value": "${var.webcompat_ml_es_url}"}
     ]
 }
 CONTAINER_PROPERTIES
