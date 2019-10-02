@@ -46,11 +46,17 @@ def webhook(event, context):
 
     batch = boto3.client(service_name="batch")
     for jobDefinition in JOB_DEFINITIONS:
+        logger.debug("Queue: {}".format(JOB_QUEUE))
+        logger.debug("Definition: {}".format(jobDefinition))
+        logger.debug("Parameters: {}".format(parameters))
+
+        jobName = uuid.uuid4().hex
         job = batch.submit_job(
             jobQueue=JOB_QUEUE,
-            jobName=uuid.uuid4().hex,
+            jobName=jobName,
             jobDefinition=jobDefinition,
             parameters=parameters,
         )
+        logger.debug("Job {} submitted".format(jobName))
 
     return {"statusCode": 200, "body": json.dumps(job)}
