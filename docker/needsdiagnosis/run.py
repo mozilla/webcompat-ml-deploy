@@ -18,7 +18,6 @@ PREDICTION_PATH = "/srv/predictions.csv"
 JSON_OUTPUT_PATH = "/srv/predictions.json"
 S3_RESULTS_ML_BUCKET = os.environ.get("S3_RESULTS_ML_BUCKET")
 ES = Elasticsearch(os.environ.get("ES_URL"))
-ES_INDEX = os.environ.get("ES_INDEX")
 
 
 if __name__ == "__main__":
@@ -51,12 +50,12 @@ if __name__ == "__main__":
             subprocess.run(command, check=True)
 
     df = pandas.read_csv(PREDICTION_PATH)
-    df.to_json(JSON_OUTPUT_PATH, index=False, orient="split")
+    df.to_json(JSON_OUTPUT_PATH)
 
     s3 = boto3.client("s3")
     issue_number = args.issue_url.split("/")[-1]
 
-    print("Writing json output")
+    print("Writing json output to S3")
     with open(JSON_OUTPUT_PATH, "rb") as prediction:
         output_name = "needsdiagnosis/{}.json".format(issue_number)
         s3.upload_fileobj(
@@ -72,14 +71,14 @@ if __name__ == "__main__":
         doc = {
             "issue": int(issue_number),
             "issue_url": args.issue_url,
-            "created_at": datetime.now(),
-            "prediction": prediction['data'][0][0]
+            "predicted_at": datetime.now(),
+            "prediction": prediction
         }
 
         ES.indices.create("needsdiagnosis-ml-results", ignore=400)
         ES.index(
             index="needsdiagnosis-ml-results",
-            doc_type="result",
+            doc_type="needsdiagnosis-result",
             id=int(issue_number),
             body=doc,
         )
