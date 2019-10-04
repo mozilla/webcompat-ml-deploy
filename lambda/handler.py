@@ -23,7 +23,7 @@ def validate_signature(event):
     signature = event["headers"]["X-Hub-Signature"]
     computed_hash = hmac.new(SECRET.encode(), payload.encode(), hashlib.sha1)
     expected = computed_hash.hexdigest().encode()
-    received = signature.lstrip('sha1=').encode()
+    received = signature.lstrip("sha1=").encode()
     return hmac.compare_digest(expected, received)
 
 
@@ -41,6 +41,9 @@ def webhook(event, context):
     except json.JSONDecodeError:
         logger.error("Failed to decode JSON")
         return {"body": json.dumps({"error": "JSON decode failure"}), "statusCode": 500}
+
+    if hookdata["action"] != "opened":
+        return {"statusCode": 200, "body": "Skipping event"}
 
     parameters = {"issue_url": hookdata["issue"]["url"]}
 

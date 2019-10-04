@@ -72,7 +72,7 @@ if __name__ == "__main__":
             "issue": int(issue_number),
             "issue_url": args.issue_url,
             "predicted_at": datetime.now(),
-            "prediction": prediction
+            "prediction": prediction,
         }
 
         ES.indices.create("needsdiagnosis-ml-results", ignore=400)
