@@ -35,25 +35,6 @@ resource "aws_batch_job_queue" "webcompat-classify" {
   ]
 }
 
-resource "aws_batch_job_definition" "webcompat_classification_invalid" {
-  name = "webcompat_classification_invalid"
-  type = "container"
-
-  container_properties = <<CONTAINER_PROPERTIES
-{
-    "image": "mozillawebcompat/ml-task",
-    "memory": 2048,
-    "vcpus": 1,
-    "command": [
-        "python", "run.py", "--issue-url", "Ref::issue_url"
-    ],
-    "environment": [
-        {"name": "S3_RESULTS_INVALID_BUCKET", "value": "${aws_s3_bucket.webcompat_ml_results.id}"}
-    ]
-}
-CONTAINER_PROPERTIES
-}
-
 resource "aws_batch_job_definition" "webcompat_classification_needsdiagnosis" {
   name = "webcompat_classification_needsdiagnosis"
   type = "container"
