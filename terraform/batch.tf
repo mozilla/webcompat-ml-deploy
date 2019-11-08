@@ -9,7 +9,7 @@ resource "aws_batch_compute_environment" "webcompat-ml" {
       "m3.medium",
     ]
 
-    max_vcpus = 16
+    max_vcpus = 4
     min_vcpus = 0
 
     security_group_ids = [
