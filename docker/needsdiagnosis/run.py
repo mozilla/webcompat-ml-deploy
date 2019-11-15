@@ -5,7 +5,6 @@ import pandas
 import subprocess
 import tempfile
 import urllib.request
-import urllib.urlencode
 
 from datetime import datetime
 from distutils.util import strtobool
@@ -88,8 +87,8 @@ if __name__ == "__main__":
         )
 
     # Add labels and automatically close issues
-    needsdiagnosis = prediction["needsdiagnosis"][0]
-    proba = prediction["proba_False"][0]
+    needsdiagnosis = prediction["needsdiagnosis"]["0"]
+    proba = prediction["proba_False"]["0"]
     is_anonymous = (
         "Submitted in the name of" not in data["body"]
         and data["user"]["login"] == "webcompat-bot"
@@ -99,11 +98,15 @@ if __name__ == "__main__":
         print("Issue doesn't need diagnosis")
         print("Issue is anonymous")
         labels_url = "{}/{}".format(args.issue_url, "labels")
-        headers = ({"Authorization": "token {}".format(GITHUB_API_TOKEN)},)
+        headers = {
+            "Authorization": "token {}".format(GITHUB_API_TOKEN),
+            "Content-Type": "application/json",
+        }
 
         if proba > 0.9:
-            print("Adding label to issue")
-            labels_data = urllib.urlencode({"labels": ["ml-needsdiagnosis-false"]})
+            labels_data = json.dumps({"labels": ["ml-needsdiagnosis-false"]}).encode()
+            print("Adding labels: {}".format(labels_data))
+
             req = urllib.request.Request(
                 url=labels_url, data=labels_data, headers=headers, method="POST"
             )
@@ -112,8 +115,9 @@ if __name__ == "__main__":
         if proba > 0.95:
             # Update labels
             print("High probability (>0.95) detected")
-            print("Adding label to issue")
-            labels_data = urllib.urlencode({"labels": ["ml-probability-high"]})
+            labels_data = json.dumps({"labels": ["ml-probability-high"]}).encode()
+            print("Adding labels: {}".format(labels_data))
+
             req = urllib.request.Request(
                 url=labels_url, data=labels_data, headers=headers, method="POST"
             )
@@ -122,7 +126,7 @@ if __name__ == "__main__":
             # Close issue
             if AUTO_CLOSE_ISSUES:
                 print("Closing issue")
-                close_data = urllib.urlencode({"state": "closed"})
+                close_data = json.dumps({"state": "closed"}).encode()
                 req = urllib.request.Request(
                     url=args.issue_url, data=close_data, headers=headers, method="PATCH"
                 )
