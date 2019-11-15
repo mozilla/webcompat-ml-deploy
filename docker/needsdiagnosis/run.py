@@ -96,6 +96,8 @@ if __name__ == "__main__":
     )
 
     if not needsdiagnosis and is_anonymous:
+        print("Issue doesn't need diagnosis")
+        print("Issue is anonymous")
         labels_url = "{}/{}".format(args.issue_url, "labels")
         headers = ({"Authorization": "token {}".format(GITHUB_API_TOKEN)},)
 
@@ -109,6 +111,8 @@ if __name__ == "__main__":
 
         if proba > 0.95:
             # Update labels
+            print("High probability (>0.95) detected")
+            print("Adding label to issue")
             labels_data = urllib.urlencode({"labels": ["ml-proba-high"]})
             req = urllib.request.Request(
                 url=labels_url, data=labels_data, headers=headers, method="POST"
@@ -117,6 +121,7 @@ if __name__ == "__main__":
 
             # Close issue
             if AUTO_CLOSE_ISSUES:
+                print("Closing issue")
                 close_data = urllib.urlencode({"state": "closed"})
                 req = urllib.request.Request(
                     url=args.issue_url, data=close_data, headers=headers, method="PATCH"
