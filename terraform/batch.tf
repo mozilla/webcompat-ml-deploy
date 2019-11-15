@@ -49,7 +49,8 @@ resource "aws_batch_job_definition" "webcompat_classification_needsdiagnosis" {
     ],
     "environment": [
         {"name": "S3_RESULTS_ML_BUCKET", "value": "${aws_s3_bucket.webcompat_ml_results.id}"},
-        {"name": "ES_URL", "value": "${var.webcompat_ml_es_url}"}
+        {"name": "ES_URL", "value": "${var.webcompat_ml_es_url}"},
+        {"name": "GITHUB_API_TOKEN", "value": "${var.webcompat_github_api_token}"}
     ]
 }
 CONTAINER_PROPERTIES
