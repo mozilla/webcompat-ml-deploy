@@ -5,8 +5,10 @@ import pandas
 import subprocess
 import tempfile
 import urllib.request
+import urllib.urlencode
 
 from datetime import datetime
+from distutils.util import strtobool
 
 import boto3
 
@@ -18,6 +20,8 @@ PREDICTION_PATH = "/srv/predictions.csv"
 JSON_OUTPUT_PATH = "/srv/predictions.json"
 S3_RESULTS_ML_BUCKET = os.environ.get("S3_RESULTS_ML_BUCKET")
 ES = Elasticsearch(os.environ.get("ES_URL"))
+GITHUB_API_TOKEN = os.environ.get("GITHUB_API_TOKEN")
+AUTO_CLOSE_ISSUES = strtobool(os.environ.get("AUTO_CLOSE_ISSUES", "False"))
 
 
 if __name__ == "__main__":
@@ -82,3 +86,44 @@ if __name__ == "__main__":
             id=int(issue_number),
             body=doc,
         )
+
+    # Add labels and automatically close issues
+    needsdiagnosis = prediction["needsdiagnosis"][0]
+    proba = prediction["proba_False"][0]
+    is_anonymous = (
+        "Submitted in the name of" not in data["body"]
+        and data["user"]["login"] == "webcompat-bot"
+    )
+
+    if not needsdiagnosis and is_anonymous:
+        print("Issue doesn't need diagnosis")
+        print("Issue is anonymous")
+        labels_url = "{}/{}".format(args.issue_url, "labels")
+        headers = ({"Authorization": "token {}".format(GITHUB_API_TOKEN)},)
+
+        if proba > 0.9:
+            print("Adding label to issue")
+            labels_data = urllib.urlencode({"labels": ["ml-needsdiagnosis"]})
+            req = urllib.request.Request(
+                url=labels_url, data=labels_data, headers=headers, method="POST"
+            )
+            urllib.request.urlopen(req)
+
+        if proba > 0.95:
+            # Update labels
+            print("High probability (>0.95) detected")
+            print("Adding label to issue")
+            labels_data = urllib.urlencode({"labels": ["ml-proba-high"]})
+            req = urllib.request.Request(
+                url=labels_url, data=labels_data, headers=headers, method="POST"
+            )
+            urllib.request.urlopen(req)
+
+            # Close issue
+            if AUTO_CLOSE_ISSUES:
+                print("Closing issue")
+                close_data = urllib.urlencode({"state": "closed"})
+                req = urllib.request.Request(
+                    url=args.issue_url, data=close_data, headers=headers, method="PATCH"
+                )
+                urllib.request.urlopen(req)

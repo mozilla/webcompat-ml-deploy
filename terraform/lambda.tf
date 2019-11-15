@@ -23,7 +23,7 @@ resource "aws_lambda_function" "webcompat_ml_webhook" {
       JOB_DEFINITIONS = "${aws_batch_job_definition.webcompat_classification_needsdiagnosis.name}:${aws_batch_job_definition.webcompat_classification_needsdiagnosis.revision}"
       JOB_QUEUE       = "${aws_batch_job_queue.webcompat-classify.name}"
       WEBHOOK_SECRET  = "${random_password.webhook_secret.result}"
-      ES_URL = var.webcompat_ml_es_url
+      ES_URL          = var.webcompat_ml_es_url
     }
   }
 
