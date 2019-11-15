@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
         if proba > 0.9:
             print("Adding label to issue")
-            labels_data = urllib.urlencode({"labels": ["ml-needsdiagnosis"]})
+            labels_data = urllib.urlencode({"labels": ["ml-needsdiagnosis-false"]})
             req = urllib.request.Request(
                 url=labels_url, data=labels_data, headers=headers, method="POST"
             )
@@ -113,7 +113,7 @@ if __name__ == "__main__":
             # Update labels
             print("High probability (>0.95) detected")
             print("Adding label to issue")
-            labels_data = urllib.urlencode({"labels": ["ml-proba-high"]})
+            labels_data = urllib.urlencode({"labels": ["ml-probability-high"]})
             req = urllib.request.Request(
                 url=labels_url, data=labels_data, headers=headers, method="POST"
             )
