@@ -127,12 +127,14 @@ if __name__ == "__main__":
             # Close issue
             if AUTO_CLOSE_ISSUES:
                 print("Posting comment")
-                comment = "We have closed this issue automatically as we suspect " \
-                    "it is invalid. If we made a mistake, please file a new issue " \
+                comment = (
+                    "We have closed this issue automatically as we suspect "
+                    "it is invalid. If we made a mistake, please file a new issue "
                     "and try to provide more context."
+                )
                 comment_data = json.dumps({"body": comment}).encode()
                 req = urllib.request.Request(
-                    url=comments_url, data=comment_data, method="POST"
+                    url=comments_url, data=comment_data, headers=headers, method="POST"
                 )
                 urllib.request.urlopen(req)
 
