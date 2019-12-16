@@ -138,8 +138,8 @@ if __name__ == "__main__":
                 )
                 urllib.request.urlopen(req)
 
-                print("Closing issue")
-                close_data = json.dumps({"state": "closed"}).encode()
+                print("Closing issue and changing milestone to 'invalid'")
+                close_data = json.dumps({"state": "closed", "milestone": 8}).encode()
                 req = urllib.request.Request(
                     url=args.issue_url, data=close_data, headers=headers, method="PATCH"
                 )
