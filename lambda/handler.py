@@ -42,7 +42,16 @@ def webhook(event, context):
         logger.error("Failed to decode JSON")
         return {"body": json.dumps({"error": "JSON decode failure"}), "statusCode": 500}
 
-    if hookdata["action"] != "opened":
+    # ignore all actions which are not about removing a label
+    if hookdata["action"] != "unlabeled":
+        return {"statusCode": 200, "body": "Skipping event"}
+
+    # for action which are unlabeling, get the name of the label
+    if hookdata["action"] == "unlabeled":
+        label = hookdata['label']['name']
+
+    # ignore all removed labels which are not needs-moderation
+    if label != "action-needsmoderation":
         return {"statusCode": 200, "body": "Skipping event"}
 
     parameters = {"issue_url": hookdata["issue"]["url"]}
