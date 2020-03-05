@@ -42,9 +42,25 @@ def webhook(event, context):
         logger.error("Failed to decode JSON")
         return {"body": json.dumps({"error": "JSON decode failure"}), "statusCode": 500}
 
-    if hookdata["action"] != "opened":
+    # ignore all actions which are not about
+    # 1. removing a label
+    # 2. opening an issue
+    if hookdata["action"] not in ["unlabeled", "opened"]:
         return {"statusCode": 200, "body": "Skipping event"}
 
+    # for action which are unlabeling, get the name of the label
+    if hookdata["action"] == "unlabeled":
+        label = hookdata["label"]["name"]
+        # ignore all removed labels which are not needs-moderation
+        if label != "action-needsmoderation":
+            return {"statusCode": 200, "body": "Skipping event"}
+    elif hookdata["action"] == "opened":
+        # for open actions we are only interested by authenticated users
+        sender = hookdata["sender"]["login"]
+        if sender == "webcompat-bot":
+            return {"statusCode": 200, "body": "Skipping event"}
+
+    # carry-on
     parameters = {"issue_url": hookdata["issue"]["url"]}
 
     batch = boto3.client(service_name="batch")
